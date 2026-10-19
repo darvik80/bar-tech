@@ -1,0 +1,10 @@
+menu "UDP Audio Transport"
+
+    config EMBED_UDP_AUDIO_RECV_TASK_STACK
+        int "Receive task stack size (bytes)"
+        default 8192
+        help
+            Stack size for the UDP audio receive FreeRTOS task.
+            Must be large enough for recvfrom + OPUS decode (~4KB).
+
+endmenu

@@ -1,0 +1,55 @@
+menu "Embed — Display (ST7789 SPI LCD)"
+
+    config EMBED_DISPLAY_LCD_WIDTH
+        int "LCD width (pixels)"
+        default 240
+        range 128 320
+
+    config EMBED_DISPLAY_LCD_HEIGHT
+        int "LCD height (pixels)"
+        default 240
+        range 128 320
+
+    config EMBED_DISPLAY_SPI_SCK
+        int "SPI clock GPIO (SCL/SCK)"
+        default 14
+        range -1 48
+        help
+            SPI clock for the LCD (GPIO 14 — TFT_SCLK).
+
+    config EMBED_DISPLAY_SPI_MOSI
+        int "SPI data GPIO (SDA/MOSI)"
+        default 15
+        range -1 48
+        help
+            SPI MOSI (master-out) for the LCD (GPIO 15 — TFT_MOSI).
+
+    config EMBED_DISPLAY_PIN_DC
+        int "Data/Command GPIO (DC)"
+        default 10
+        range -1 48
+        help
+            Data/Command select pin (GPIO 10 — TFT_DC).
+
+    config EMBED_DISPLAY_PIN_CS
+        int "Chip-Select GPIO (CS)"
+        default 13
+        range -1 48
+        help
+            SPI chip-select pin (GPIO 13 — TFT_CS).
+
+    config EMBED_DISPLAY_PIN_RST
+        int "Reset GPIO (RST)"
+        default 16
+        range -1 48
+        help
+            Hardware reset pin (-1 = none, use software reset). GPIO 16 — TFT_RST.
+
+    config EMBED_DISPLAY_PIN_BLK
+        int "Backlight GPIO (BLK)"
+        default 21
+        range -1 48
+        help
+            Backlight control pin (-1 = always on). GPIO 21 — TFT_BL.
+
+endmenu

@@ -1,0 +1,45 @@
+menu "Session Manager"
+
+    config EMBED_SESSION_WAIT_TIMEOUT
+        int "Seconds to wait for session.control start"
+        default 5
+        help
+            Timeout for WAIT_SESSION state. If the server does not send
+            cogitor.session.control (start) within this time, return to IDLE.
+
+    config EMBED_FOLLOWUP_TIMEOUT
+        int "Seconds of silence before returning to IDLE"
+        default 30
+        help
+            Timeout for FOLLOWUP state. After the response finishes, wait
+            this long for follow-up speech before going idle.
+
+    config EMBED_PLAYBACK_TIMEOUT
+        int "Seconds to wait for first response audio"
+        default 300
+        help
+            Maximum time to wait for the first audio frame from the server
+            after transitioning to PLAYBACK state.
+
+    config EMBED_PLAYBACK_GAP_TIMEOUT
+        int "Seconds of audio gap before FOLLOWUP"
+        default 5
+        help
+            If no audio frame arrives for this many seconds during PLAYBACK,
+            transition to FOLLOWUP.
+
+    config EMBED_MAX_RECORDING_DURATION
+        int "Maximum recording duration in seconds"
+        default 30
+        help
+            Force end-of-speech after this many seconds of recording,
+            even if the user is still speaking.
+
+    config EMBED_PLAYBACK_TASK_STACK
+        int "Speaker playback task stack size (bytes)"
+        default 16384
+        help
+            Stack size for the speaker playback FreeRTOS task that reads
+            from the ring buffer and writes to AudioBusService.
+
+endmenu

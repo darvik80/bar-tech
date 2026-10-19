@@ -1,0 +1,41 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# Secrets
+.env
+.env.*
+!.env.example
+**/config.yaml
+!**/config.example.yaml
+**/sdkconfig
+!**/sdkconfig.defaults
+
+# ESP-IDF / bar-face
+bar-face/build/
+bar-face/managed_components/
+bar-face/dependencies.lock
+bar-face/sdkconfig.old
+bar-face/.cache/
+
+# Rust / bar-core
+bar-core/target/
+
+# Python leftovers / local data
+__pycache__/
+*.pyc
+.venv/
+bar-core/data/*.db
+bar-core/data/*.db-*
+*.log
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local prompt scratch
+promt.md

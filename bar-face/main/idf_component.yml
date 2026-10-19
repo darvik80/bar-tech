@@ -1,0 +1,12 @@
+## IDF Component Manager Manifest File
+dependencies:
+  idf: ">=5.5"
+  embed:
+    git: https://gitea.darvik.synology.me:8443/darvik/embed-framework.git
+    path: components/embed
+  embed_core:
+    git: https://gitea.darvik.synology.me:8443/darvik/embed-framework.git
+    path: components/embed_core
+  cogitor_iot:
+    git: https://gitea.darvik.synology.me:8443/darvik/embed-framework.git
+    path: components/cogitor_iot

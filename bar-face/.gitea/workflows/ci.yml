@@ -1,0 +1,134 @@
+# Gitea Actions (GitHub Actions–compatible YAML for act_runner)
+#
+# host-tests     — Linux Unity run, no IDF, no flash (primary gate)
+# embed-unity    — Docker IDF build of test_apps/embed_unity
+# firmware*      — Docker IDF firmware builds
+#
+# Do NOT use job-level `container: espressif/idf` with actions/checkout (no node).
+# Nested docker: tools/ci/idf-docker.sh uses --volumes-from on act_runner.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - "release*"
+      - "release/**"
+  pull_request:
+  workflow_dispatch:
+
+env:
+  IDF_TARGET: esp32s3
+  IDF_IMAGE: espressif/idf:v6.1
+
+jobs:
+  host-tests:
+    name: Host Unity tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cmake g++ git
+
+      - name: Configure & build
+        run: |
+          cmake -S host_test -B host_test/build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build host_test/build -j"$(nproc)"
+
+      - name: Run tests
+        run: ctest --test-dir host_test/build --output-on-failure --verbose
+
+  embed-unity:
+    name: Build embed_unity (IDF)
+    runs-on: ubuntu-latest
+    needs: host-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure IDF docker helper
+        run: |
+          set -euo pipefail
+          test -f tools/ci/idf-docker.sh
+          chmod +x tools/ci/idf-docker.sh
+
+      - name: Build embed_unity
+        run: |
+          tools/ci/idf-docker.sh test_apps/embed_unity -- set-target "${IDF_TARGET}"
+          tools/ci/idf-docker.sh test_apps/embed_unity -- build
+
+      - name: Upload embed_unity artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: embed-unity-${{ env.IDF_TARGET }}
+          path: |
+            test_apps/embed_unity/build/*.bin
+            test_apps/embed_unity/build/flasher_args.json
+          if-no-files-found: warn
+
+  firmware:
+    name: Build firmware
+    runs-on: ubuntu-latest
+    needs: host-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure IDF docker helper
+        run: |
+          set -euo pipefail
+          if [ ! -f tools/ci/idf-docker.sh ]; then
+            echo "tools/ci/idf-docker.sh missing from repo checkout" >&2
+            ls -la tools/ci 2>/dev/null || ls -la
+            exit 1
+          fi
+          chmod +x tools/ci/idf-docker.sh
+
+      - name: Build project
+        run: |
+          tools/ci/idf-docker.sh . -- set-target "${IDF_TARGET}"
+          tools/ci/idf-docker.sh . -- build
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware-${{ env.IDF_TARGET }}
+          path: |
+            build/*.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
+            build/flasher_args.json
+          if-no-files-found: error
+
+  firmware-ota:
+    name: Build firmware (OTA partitions)
+    runs-on: ubuntu-latest
+    needs: host-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure IDF docker helper
+        run: |
+          set -euo pipefail
+          test -f tools/ci/idf-docker.sh
+          chmod +x tools/ci/idf-docker.sh
+
+      - name: Build with partitions_ota.csv
+        run: |
+          tools/ci/idf-docker.sh . -- set-target "${IDF_TARGET}"
+          tools/ci/idf-docker.sh . -- -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.ota" build
+
+      - name: Upload OTA firmware artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware-ota-${{ env.IDF_TARGET }}
+          path: |
+            build/*.bin
+            build/flasher_args.json
+          if-no-files-found: error

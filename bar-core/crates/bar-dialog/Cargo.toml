@@ -1,0 +1,14 @@
+[package]
+name = "bar-dialog"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+bar-llm.workspace = true
+bar-mqtt.workspace = true
+bar-rag.workspace = true
+bar-storage.workspace = true
+serde_json.workspace = true
+tracing.workspace = true

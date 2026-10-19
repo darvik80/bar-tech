@@ -1,0 +1,60 @@
+http:
+  bind: "0.0.0.0"
+  port: 8091
+
+mqtt:
+  broker: "mqtt://127.0.0.1:1883"
+  plugin_id: "bar-core"
+  product_id: "bar"
+  username: "extplg_def_bar-core"
+  password: "change-me"
+  # Match iot-platform external plugin rules bus
+  events_subscribe: "platform/v1/events/def/{product_id}/#"
+  commands_prefix: "platform/v1/commands/{product_id}"
+
+audio:
+  udp_bind: "0.0.0.0"
+  udp_port: 50004
+  advertise_ip: "192.168.1.22"
+
+stt:
+  mode: local   # local | cloud
+  local:
+    base_url: "http://127.0.0.1:8082"
+    language: "ru"
+  cloud:
+    base_url: "https://api.openai.com/v1"
+    api_key_env: OPENAI_API_KEY
+    model: "whisper-1"
+
+tts:
+  mode: local   # local | cloud
+  local:
+    binary_path: "D:/Projects/piper/piper.exe"
+    model_dir: "D:/Projects/piper/models"
+    voice: "ru_RU-ruslan-medium"
+  cloud:
+    base_url: "https://api.openai.com/v1"
+    api_key_env: OPENAI_API_KEY
+    model: "tts-1"
+    voice: "alloy"
+
+llm:
+  base_url: "https://api.openai.com/v1"
+  api_key_env: OPENAI_API_KEY
+  model: "gpt-4o-mini"
+  temperature: 0.7
+  max_tokens: 256
+  timeout_sec: 60
+
+rag:
+  knowledge_dir: "data/knowledge"
+  top_k: 4
+  embed_model: "text-embedding-3-small"
+  chunk_size: 800
+  chunk_overlap: 100
+
+db:
+  path: "data/bar-core.db"
+  max_turns: 10
+  retention_days: 7

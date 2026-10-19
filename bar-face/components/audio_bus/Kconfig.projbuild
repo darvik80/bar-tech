@@ -1,0 +1,90 @@
+menu "Embed — Audio Bus (ES8311 duplex I2S)"
+
+    config EMBED_AUDIO_I2S_MCLK
+        int "I2S master clock GPIO (MCLK)"
+        default 5
+        range -1 48
+        help
+            GPIO for the I2S master clock output (MCLK).
+            Shared between speaker and microphone via ES8311 codec.
+            GPIO 5 — I2S MCLK.
+
+    config EMBED_AUDIO_I2S_BCK
+        int "I2S bit-clock GPIO (BCK/SCK)"
+        default 4
+        range -1 48
+        help
+            GPIO for the I2S bit-clock (BCLK/SCK) line.
+            Shared between speaker and microphone via ES8311 codec.
+            GPIO 4 — I2S SCK.
+
+    config EMBED_AUDIO_I2S_WS
+        int "I2S word-select GPIO (WS/LRCK)"
+        default 2
+        range -1 48
+        help
+            GPIO for the I2S word-select / left-right clock (WS/LRCK).
+            Shared between speaker and microphone via ES8311 codec.
+            GPIO 2 — I2S LRCK.
+
+    config EMBED_AUDIO_I2S_DOUT
+        int "I2S data-out GPIO (DOUT → speaker)"
+        default 1
+        range -1 48
+        help
+            GPIO for the I2S data output to the speaker (DOUT on ES8311).
+            GPIO 1 — I2S DOUT.
+
+    config EMBED_AUDIO_I2S_DIN
+        int "I2S data-in GPIO (DIN ← microphone)"
+        default 3
+        range -1 48
+        help
+            GPIO for the I2S data input from the microphone (DIN on ES8311).
+            GPIO 3 — I2S DIN.
+
+    config EMBED_AUDIO_AMP_EN_GPIO
+        int "Amplifier enable GPIO (-1 = none)"
+        default 8
+        range -1 48
+        help
+            GPIO to enable the speaker amplifier (GPIO 8 — PACTRL).
+            Set to -1 if no enable pin is needed.
+
+    config EMBED_AUDIO_I2C_SDA
+        int "Codec I2C SDA GPIO"
+        default 7
+        range -1 48
+        help
+            GPIO for the ES8311 I2C data line (SDA). GPIO 7 — I2C SDA.
+
+    config EMBED_AUDIO_I2C_SCL
+        int "Codec I2C SCL GPIO"
+        default 6
+        range -1 48
+        help
+            GPIO for the ES8311 I2C clock line (SCL). GPIO 6 — I2C SCL.
+
+    config EMBED_AUDIO_CODEC_ADDR
+        int "ES8311 I2C address (7-bit)"
+        default 24
+        range 8 119
+        help
+            7-bit I2C address of the ES8311 codec. Default 24 = 0x18.
+
+    config EMBED_AUDIO_MIC_GAIN_DB
+        int "Microphone PGA gain (dB)"
+        default 30
+        range 0 42
+        help
+            Analog microphone gain (0..42 dB, rounded to 6 dB steps).
+
+    config EMBED_AUDIO_DAC_VOLUME
+        int "DAC volume register (0-255)"
+        default 200
+        range 0 255
+        help
+            Speaker volume register: 0 = -95.5 dB, 255 = +32 dB (linear).
+            200 corresponds to roughly +4 dB.
+
+endmenu

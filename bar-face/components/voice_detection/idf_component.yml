@@ -1,0 +1,7 @@
+dependencies:
+  idf:
+    version: '>=5.5'
+  espressif/esp-sr:
+    version: '>=2.0.0'
+description: Voice detection service (wake word + VAD) for the embed framework
+version: 1.0.0

@@ -1,0 +1,15 @@
+[package]
+name = "bar-media"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+bar-config.workspace = true
+bytes.workspace = true
+rand.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+libopus_sys = { version = "0.3", features = ["bundled"] }

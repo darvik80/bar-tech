@@ -1,0 +1,12 @@
+[package]
+name = "bar-rag"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+bar-config.workspace = true
+bar-llm.workspace = true
+bar-storage.workspace = true
+tracing.workspace = true
+tokio.workspace = true

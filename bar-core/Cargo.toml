@@ -1,0 +1,51 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/bar-config",
+    "crates/bar-mqtt",
+    "crates/bar-media",
+    "crates/bar-voice",
+    "crates/bar-llm",
+    "crates/bar-rag",
+    "crates/bar-dialog",
+    "crates/bar-storage",
+    "crates/bar-api",
+    "crates/bar-core",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["bar-tech"]
+
+[workspace.dependencies]
+anyhow = "1"
+async-trait = "0.1"
+axum = "0.8"
+base64 = "0.22"
+bytes = "1"
+chrono = { version = "0.4", features = ["serde"] }
+futures-util = "0.3"
+rand = "0.8"
+reqwest = { version = "0.12", default-features = false, features = ["json", "multipart", "rustls-tls", "stream"] }
+rumqttc = "0.24"
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "=1.11.0", features = ["v4"] }
+bar-config = { path = "crates/bar-config" }
+bar-mqtt = { path = "crates/bar-mqtt" }
+bar-media = { path = "crates/bar-media" }
+bar-voice = { path = "crates/bar-voice" }
+bar-llm = { path = "crates/bar-llm" }
+bar-rag = { path = "crates/bar-rag" }
+bar-dialog = { path = "crates/bar-dialog" }
+bar-storage = { path = "crates/bar-storage" }
+bar-api = { path = "crates/bar-api" }

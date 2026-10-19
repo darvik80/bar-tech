@@ -1,0 +1,3 @@
+# This file keeps the assets/ directory in git.
+# Place PNG and GIF files here — they are auto-embedded into firmware
+# at build time by components/display/CMakeLists.txt.

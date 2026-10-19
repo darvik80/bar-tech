@@ -1,0 +1,95 @@
+# Gitea Actions — docs → PRD review repo sync
+#
+# Syncs the configured source folder (default: docs/) to the global
+# prd-review repository under the configured target subfolder.
+#
+# Trigger: push to master when source-folder files change.
+# Auth: requires a Gitea token in the repo secret PRD_SYNC_TOKEN
+#       (user with write access to the target repo).
+
+name: Sync docs → prd-review
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+  workflow_dispatch:
+    inputs:
+      source_dir:
+        description: "Source directory in this repo"
+        required: false
+        default: "docs"
+      target_subdir:
+        description: "Target subdirectory in the destination repo"
+        required: true
+        default: "embed-framework"
+
+env:
+  # ── configurable paths ──────────────────────────────────────────
+  SOURCE_DIR: "docs"                       # folder in THIS repo to sync
+  TARGET_REPO: "https://gitea.darvik.synology.me:8443/Cogitor/prd-review.git"
+  TARGET_SUBDIR: "embed-framework"         # subfolder inside target repo
+  # ─────────────────────────────────────────────────────────────────
+
+jobs:
+  sync-docs:
+    name: Sync docs to prd-review
+    steps:
+      # ── 1. Checkout source repo ─────────────────────────────────
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          path: src
+          fetch-depth: 1
+
+      # ── 2. Resolve effective paths (dispatch overrides) ─────────
+      - name: Resolve paths
+        id: vars
+        run: |
+          SRC="${{ github.event.inputs.source_dir || env.SOURCE_DIR }}"
+          TGT="${{ github.event.inputs.target_subdir || env.TARGET_SUBDIR }}"
+          echo "source_dir=${SRC}"   >> "$GITHUB_OUTPUT"
+          echo "target_subdir=${TGT}" >> "$GITHUB_OUTPUT"
+          echo "Source dir : ${SRC}"
+          echo "Target dir : ${TGT}"
+
+      # ── 3. Clone target repo ────────────────────────────────────
+      - name: Clone target repo
+        env:
+          PRD_TOKEN: ${{ secrets.PRD_SYNC_TOKEN }}
+        run: |
+          git clone --depth 1 \
+            "https://x-access-token:${PRD_TOKEN}@${TARGET_REPO#https://}" \
+            dest
+
+      # ── 4. Sync source → target ─────────────────────────────────
+      - name: Sync docs to target
+        run: |
+          DEST="dest/${{ steps.vars.outputs.target_subdir }}"
+          mkdir -p "${DEST}"
+
+          # Remove old content (except .git) then copy fresh
+          find "${DEST}" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+
+          # Copy source folder contents into target subdir
+          cp -a "src/${{ steps.vars.outputs.source_dir }}/." "${DEST}/"
+
+      # ── 5. Commit & push ────────────────────────────────────────
+      - name: Commit and push
+        env:
+          PRD_TOKEN: ${{ secrets.PRD_SYNC_TOKEN }}
+        run: |
+          cd dest
+          git config user.name  "gitea-actions[bot]"
+          git config user.email "gitea-actions@noreply.local"
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "sync(${GITHUB_REF_NAME}): update ${{ steps.vars.outputs.target_subdir }} from ${GITHUB_SHA::8}"
+          git push origin HEAD

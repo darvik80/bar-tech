@@ -1,0 +1,31 @@
+services:
+  bar-core:
+    build:
+      context: ../bar-core
+      dockerfile: ../deploy/Dockerfile
+    ports:
+      - "8091:8091"
+      - "50004:50004/udp"
+    environment:
+      - RUST_LOG=info,bar_core=debug
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPUS_BUNDLED=1
+    volumes:
+      - ../bar-core/config.yaml:/app/config.yaml:ro
+      - ../bar-core/data:/app/data
+      - piper-models:/models/piper:ro
+    restart: unless-stopped
+
+  whisper:
+    image: ghcr.io/ggerganov/whisper.cpp:main
+    ports:
+      - "8082:8082"
+    volumes:
+      - whisper-models:/models
+    profiles:
+      - local-stt
+    restart: unless-stopped
+
+volumes:
+  piper-models:
+  whisper-models:

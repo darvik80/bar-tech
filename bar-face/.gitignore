@@ -1,0 +1,23 @@
+# ESP-IDF build artifacts
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+cmake-build-*/
+dependencies.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Wake word training data & generated model files
+tools/wakeword/data/
+components/voice_detection/include/voice_detection/wakeword_model.h
+components/voice_detection/include/voice_detection/wakeword_weights.bin
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,41 @@
+menu "Embed — Voice Detection"
+
+    config EMBED_VOICE_DETECTION_FEED_TASK_STACK
+        int "Feed task stack size (bytes)"
+        default 16384
+        range 4096 32768
+        help
+            Stack size for the AudioBus → AFE feed task.
+            Must accommodate queue ops for encode task (~1KB extra).
+
+    config EMBED_VOICE_DETECTION_FETCH_TASK_STACK
+        int "Fetch task stack size (bytes)"
+        default 8192
+        range 2048 16384
+        help
+            Stack size for the AFE fetch / detection task.
+
+    config EMBED_VOICE_DETECTION_STATUS_LED
+        int "Status LED GPIO"
+        default 46
+        range -1 48
+        help
+            GPIO for the status LED (-1 = none). GPIO 46 — LED.
+
+    config EMBED_VOICE_DETECTION_MN_COMMAND
+        string "MultiNet command word"
+        default "HEY VITALYA"
+        help
+            Command phrase recognized by ESP-SR MultiNet.
+            Use uppercase English letters/spaces.
+            The model tokenizes this string into phonemes at startup.
+
+    config EMBED_VOICE_DETECTION_MN_THRESHOLD
+        int "MultiNet detection threshold (0-99)"
+        default 20
+        range 0 99
+        help
+            Detection probability threshold (percentage).
+            Lower = more sensitive, higher = fewer false triggers.
+
+endmenu
